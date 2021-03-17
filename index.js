@@ -38,7 +38,7 @@ bot.on("ready", async () => {
 	console.log(`\n${bot.user.username} is online!`);
 	bot.user.setActivity('in play.saffas.xyz', { type: 'PLAYING' });
   new WOKCommands(bot, {
-    commandsDir: 'commands',
+    commandsDir: 'slashcommands',
     testServers: [guildId],
     showWarns: false,
   })
