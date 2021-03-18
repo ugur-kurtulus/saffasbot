@@ -7,7 +7,7 @@ module.exports.run = async (bot, message, args) => {
     message.channel.messages.fetch({around: args[0], limit: 1})
         .then(msg => {
         const fetchedMsg = msg.first();
-        if(fetchedMsg.author.bot || message.member.roles.cache.some(role => role.name === 'Staff')){
+        if(fetchedMsg.author.bot && message.member.roles.cache.some(role => role.name === 'Staff')){
         const embed1 = new Discord.MessageEmbed()
         embed1.setAuthor(message.member.displayName, message.author.avatarURL())
         embed1.setColor('#00FFFF')
