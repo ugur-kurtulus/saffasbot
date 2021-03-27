@@ -3,7 +3,7 @@
 Designed as a further improvement of the bot created for JaymzGit's hambot
 
 # **Upcoming Features:**
--> Slash commands role requirements
+-> ~~Slash commands role requirements~~
 
 -> Channel restrictions via slash commands
 
