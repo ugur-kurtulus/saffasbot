@@ -9,7 +9,7 @@ const bot = new Discord.Client({disableEveryone: true});
 const interactions = require("discord-slash-commands-client");
 bot.commands = new Discord.Collection();
 
-const guildId = '814607392687390720'
+const guildId = '820383461202329671'
 
 
 //Check for any files in the commands folders (aka checking if the bot has the following commands or not)
@@ -444,6 +444,10 @@ if (message.channel.name.includes("console-lobby")) {
       }
 
       if(command === 'move'){
+        const guild = await bot.guilds.fetch(interaction.guild_id)
+        const role = guild.roles.cache.find(role => role.name === 'Staff')
+        const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
+        if(!checkrole){return}
         const cat = args.find(arg => arg.name.toLowerCase() == 'category').value;
             if(cat === "t" || cat === "tickets"){
             bot.channels.resolve(interaction.channel_id).setParent("814747906341863484")
@@ -461,6 +465,10 @@ if (message.channel.name.includes("console-lobby")) {
             reply(interaction, embed)
             console.log(interaction.member.user.username + " has moved " + channel.name + " to " + cat)
       }else if(command === 'log'){
+        const guild = await bot.guilds.fetch(interaction.guild_id)
+        const role = guild.roles.cache.find(role => role.name === 'Staff')
+        const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
+        if(!checkrole){return}
           const logtype = args.find(arg => arg.name.toLowerCase() == 'type').value;
           const ign = args.find(arg => arg.name.toLowerCase() == 'ign').value;
           const reason = args.find(arg => arg.name.toLowerCase() == 'reason').value;
@@ -498,6 +506,10 @@ if (message.channel.name.includes("console-lobby")) {
 
             }
       }else if (command === 'edit'){
+        const guild = await bot.guilds.fetch(interaction.guild_id)
+        const role = guild.roles.cache.find(role => role.name === 'High Staff')
+        const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
+        if(!checkrole){return}
         const id = args.find(arg => arg.name.toLowerCase() == 'id').value;
         const content = args.find(arg => arg.name.toLowerCase() == 'new').value;
         const userobject = await bot.users.fetch(interaction.member.user.id)
@@ -523,6 +535,10 @@ if (message.channel.name.includes("console-lobby")) {
             }
       }else if (command === 'shelp'){
         const embed = new Discord.MessageEmbed()
+        const guild = await bot.guilds.fetch(interaction.guild_id)
+        const role = guild.roles.cache.find(role => role.name === 'Staff')
+        const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
+        if(!checkrole){return}
         embed.setAuthor('Saffas Bot Usage', 'https://cdn.discordapp.com/icons/814607392687390720/531aedf8b285fd14e4d8c2bb5a85bcdd.webp?size=128')
         embed.setColor('#00FFFF')
         embed.setDescription(`**Usage of Saffas Bot** \n**__Slash Commands:__** \n/log <type> <ign> <reason> <duration/quantity> <details>\n/move <tickets/survival/closed> -> Used to move channels.\n/restrict <hs/sh/exec/undo/help> -> Work in progress, currently disabled.\n/shelp -> Displays this message.\n/saffas -> Used to display information about the network.\n/tag -> Used to tag/leave a note to channels.\n**__Commands:__**\n-serverinfo -> Used to display information about the discord server.\n-move <tickets/survival/closed> -> Used to move channels.\n-restrict <hs/sh/exec/undo/help> -> Used to restrict channels.\n-shelp -> Displays this message.\n-saffas -> Used to display information about the network.\n-tag -> Used to tag/leave a note to channels.`)
@@ -533,6 +549,10 @@ if (message.channel.name.includes("console-lobby")) {
         const tag = args.find(arg => arg.name.toLowerCase() == 'note').value;
         const embed = new Discord.MessageEmbed()
         const userobject = await bot.users.fetch(interaction.member.user.id)
+        const guild = await bot.guilds.fetch(interaction.guild_id)
+        const role = guild.roles.cache.find(role => role.name === 'Staff')
+        const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
+        if(!checkrole){return}
         embed.setAuthor(interaction.member.user.username, userobject.avatarURL())
         embed.setColor('#00FFFF')
         embed.setDescription(interaction.member.user.username + ` has tagged the channel as \` ` + tag +` \``)
