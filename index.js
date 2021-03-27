@@ -539,14 +539,14 @@ if (message.channel.name.includes("console-lobby")) {
         const role = guild.roles.cache.find(role => role.name === 'Staff')
         const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
         if(!checkrole){return}
-        embed.setAuthor('Saffas Bot Usage', 'https://cdn.discordapp.com/icons/814607392687390720/531aedf8b285fd14e4d8c2bb5a85bcdd.webp?size=128')
+        embed.setAuthor('Saffas Bot Usage', 'https://cdn.discordapp.com/icons/814607392687390720/80f62ec4e4104e8373f07ef334b81e61.webp?size=128')
         embed.setColor('#00FFFF')
         embed.setDescription(`**Usage of Saffas Bot** \n**__Slash Commands:__** \n/log <type> <ign> <reason> <duration/quantity> <details>\n/move <tickets/survival/closed> -> Used to move channels.\n/restrict <hs/sh/exec/undo/help> -> Work in progress, currently disabled.\n/shelp -> Displays this message.\n/saffas -> Used to display information about the network.\n/tag -> Used to tag/leave a note to channels.\n**__Commands:__**\n-serverinfo -> Used to display information about the discord server.\n-move <tickets/survival/closed> -> Used to move channels.\n-restrict <hs/sh/exec/undo/help> -> Used to restrict channels.\n-shelp -> Displays this message.\n-saffas -> Used to display information about the network.\n-tag -> Used to tag/leave a note to channels.`)
         embed.setFooter('Saffas Bot | play.saffas.xyz')
         reply(interaction, embed)
       }else if (command === 'tag'){
         const channel = await bot.channels.fetch(interaction.channel_id);
-        const tag = args.find(arg => arg.name.toLowerCase() == 'note').value;
+        const tag = args.find(arg => arg.name.toLowerCase() == 'note').value.toString().toUpperCase();
         const embed = new Discord.MessageEmbed()
         const userobject = await bot.users.fetch(interaction.member.user.id)
         const guild = await bot.guilds.fetch(interaction.guild_id)
@@ -555,7 +555,7 @@ if (message.channel.name.includes("console-lobby")) {
         if(!checkrole){return}
         embed.setAuthor(interaction.member.user.username, userobject.avatarURL())
         embed.setColor('#00FFFF')
-        embed.setDescription(interaction.member.user.username + ` has tagged the channel as \` ` + tag +` \``)
+        embed.setDescription(interaction.member.user.username + ` has tagged the channel as \`` + tag +`\``)
         embed.setFooter('Saffas Bot | play.saffas.xyz')
         reply(interaction, embed)
         console.log(interaction.member.user.username + " has tagged " + channel.name + " as " + tag)
@@ -566,7 +566,7 @@ if (message.channel.name.includes("console-lobby")) {
 
 util.status('play.saffas.xyz') // port is default 25565
     .then((response) => {
-        pingembed.setAuthor('Saffas Network Status', 'https://cdn.discordapp.com/icons/814607392687390720/531aedf8b285fd14e4d8c2bb5a85bcdd.webp?size=128')
+        pingembed.setAuthor('Saffas Network Status', 'https://cdn.discordapp.com/icons/814607392687390720/80f62ec4e4104e8373f07ef334b81e61.webp?size=128')
     		pingembed.setColor('#00FFFF')
     		pingembed.addField('Server IP:', response.host)
     		pingembed.addField('Server Version: ', response.version)
