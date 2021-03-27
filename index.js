@@ -7,6 +7,9 @@ const ping = require("minecraft-server-util")
 const fs = require("fs");
 const bot = new Discord.Client({disableEveryone: true});
 const interactions = require("discord-slash-commands-client");
+const Canvas = require('canvas')
+const { MessageAttachment } = require('discord.js');
+const path = require('path');
 bot.commands = new Discord.Collection();
 
 const guildId = '820383461202329671'
@@ -539,14 +542,14 @@ if (message.channel.name.includes("console-lobby")) {
         const role = guild.roles.cache.find(role => role.name === 'Staff')
         const checkrole = await role.members.find(m=>m.user.id === interaction.member.user.id)
         if(!checkrole){return}
-        embed.setAuthor('Saffas Bot Usage', 'https://cdn.discordapp.com/icons/814607392687390720/531aedf8b285fd14e4d8c2bb5a85bcdd.webp?size=128')
+        embed.setAuthor('Saffas Bot Usage', 'https://cdn.discordapp.com/icons/814607392687390720/80f62ec4e4104e8373f07ef334b81e61.webp?size=128')
         embed.setColor('#00FFFF')
         embed.setDescription(`**Usage of Saffas Bot** \n**__Slash Commands:__** \n/log <type> <ign> <reason> <duration/quantity> <details>\n/move <tickets/survival/closed> -> Used to move channels.\n/restrict <hs/sh/exec/undo/help> -> Work in progress, currently disabled.\n/shelp -> Displays this message.\n/saffas -> Used to display information about the network.\n/tag -> Used to tag/leave a note to channels.\n**__Commands:__**\n-serverinfo -> Used to display information about the discord server.\n-move <tickets/survival/closed> -> Used to move channels.\n-restrict <hs/sh/exec/undo/help> -> Used to restrict channels.\n-shelp -> Displays this message.\n-saffas -> Used to display information about the network.\n-tag -> Used to tag/leave a note to channels.`)
         embed.setFooter('Saffas Bot | play.saffas.xyz')
         reply(interaction, embed)
       }else if (command === 'tag'){
         const channel = await bot.channels.fetch(interaction.channel_id);
-        const tag = args.find(arg => arg.name.toLowerCase() == 'note').value;
+        const tag = args.find(arg => arg.name.toLowerCase() == 'note').value.toString().toUpperCase();
         const embed = new Discord.MessageEmbed()
         const userobject = await bot.users.fetch(interaction.member.user.id)
         const guild = await bot.guilds.fetch(interaction.guild_id)
@@ -555,7 +558,7 @@ if (message.channel.name.includes("console-lobby")) {
         if(!checkrole){return}
         embed.setAuthor(interaction.member.user.username, userobject.avatarURL())
         embed.setColor('#00FFFF')
-        embed.setDescription(interaction.member.user.username + ` has tagged the channel as \` ` + tag +` \``)
+        embed.setDescription(interaction.member.user.username + ` has tagged the channel as \`` + tag +`\``)
         embed.setFooter('Saffas Bot | play.saffas.xyz')
         reply(interaction, embed)
         console.log(interaction.member.user.username + " has tagged " + channel.name + " as " + tag)
@@ -566,7 +569,7 @@ if (message.channel.name.includes("console-lobby")) {
 
 util.status('play.saffas.xyz') // port is default 25565
     .then((response) => {
-        pingembed.setAuthor('Saffas Network Status', 'https://cdn.discordapp.com/icons/814607392687390720/531aedf8b285fd14e4d8c2bb5a85bcdd.webp?size=128')
+        pingembed.setAuthor('Saffas Network Status', 'https://cdn.discordapp.com/icons/814607392687390720/80f62ec4e4104e8373f07ef334b81e61.webp?size=128')
     		pingembed.setColor('#00FFFF')
     		pingembed.addField('Server IP:', response.host)
     		pingembed.addField('Server Version: ', response.version)
@@ -608,5 +611,63 @@ util.status('play.saffas.xyz') // port is default 25565
     return { ...data, files }
   }
 
+  const applyText = (canvas, text) => {
+    const ctx = canvas.getContext('2d');
+  
+    // Declare a base size of the font
+    let fontSize = 70;
+  
+    do {
+      // Assign the font to the context and decrement it so it can be measured again
+      ctx.font = `${fontSize -= 10}px calibri`;
+      // Compare pixel width of the text to the canvas minus the approximate avatar size
+    } while (ctx.measureText(text).width > canvas.width - 300);
+  
+    // Return the result to use in the actual canvas
+    return ctx.font;
+  };
+
+  bot.on('guildMemberAdd', async member => {
+    const channel = member.guild.channels.cache.find(ch => ch.name === 'welcome');
+    if (!channel) return;
+  
+    const canvas = Canvas.createCanvas(700, 300);
+    const ctx = canvas.getContext('2d');
+  
+    const background = await Canvas.loadImage(path.join(__dirname, '../background.png'));
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+  
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffffff';  
+    ctx.lineWidth = 10;
+    ctx.arc(350, 115, 75, 0, 2 * Math.PI);
+    ctx.stroke();
+  
+    // Select the font size and type from one of the natively available fonts
+    ctx.font = applyText(canvas,member.user.tag);
+    // Select the style that will be used to fill the text in
+    ctx.fillStyle = '#ffffff';
+    // Actually fill the text with a solid color
+    ctx.textAlign = "left";
+    ctx.fillText(member.user.tag, canvas.width / 4.2, 250);
+  
+    ctx.beginPath();
+    ctx.arc(350, 115, 75, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.clip();
+  
+    const avatar = await Canvas.loadImage(member.user.displayAvatarURL({size: 2048, format: "png"}));
+    ctx.drawImage(avatar, 275, 40, 150, 150);  
+  
+    const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
+    const embed = new Discord.MessageEmbed
+    embed.setAuthor('Saffas Staff Team', 'https://cdn.discordapp.com/icons/814607392687390720/80f62ec4e4104e8373f07ef334b81e61.webp?size=128')
+    embed.setColor('#00FFFF')
+    embed.setDescription(`Welcome to Saffas ${member}!`)
+    embed.attachFiles(attachment)
+    embed.setImage('attachment://welcome-image.png');
+    embed.setFooter('Saffas Bot | play.saffas.xyz')
+    channel.send(embed);
+  });
 
 bot.login(tokenfile.token);
